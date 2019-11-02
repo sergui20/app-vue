@@ -2,6 +2,11 @@
   <div id="app">
     <Header></Header>
 
+    <Notification v-show="searched" :color="showResults ? 'is-success' : 'is-danger'">
+      <p v-if="showResults" slot="body">Se han encontrado {{ tracks.length }} resultados</p>
+      <p v-if="!showResults" slot="body">No se han encontrado resultados</p>
+    </Notification>
+
     <Loader v-show="isLoading"></Loader>
     <section class="section" v-show="!isLoading">
       <nav class="nav">
@@ -29,10 +34,14 @@
 <script>
 import '../node_modules/bulma/css/bulma.min.css';
 import service from './services/platzi-music';
+
 import Footer from './components/layout/Footer';
 import Header from './components/layout/Header';
+
 import Track from './components/Track';
+
 import Loader from './components/shared/Loader';
+import Notification from './components/shared/Notification';
 
 export default {
   name: 'app',
@@ -40,13 +49,16 @@ export default {
     Footer,
     Header,
     MyTracks: Track,
-    Loader
+    Loader,
+    Notification
   },
   data() {
     return {
       searchQuery: '',
       tracks: [],
       isLoading: false,
+      showResults: false,
+      searched: false,
       selectedTrack: ''
     }
   },
@@ -55,12 +67,24 @@ export default {
       return `Encontrados: ${this.tracks.length}`
     }
   },
+  // watch: {
+  //   showResults() {
+  //     console.log('hey')
+  //     if(!this.showResults) {
+  //       setTimeout(() => {
+  //         this.searched = false
+  //       }, 3000)
+  //     }
+  //   }
+  // },
   methods: {
     search() {
       if(!this.searchQuery) return
       this.isLoading = true
       service.getTracks(this.searchQuery)
         .then(res => {
+          this.searched = true
+          this.showResults = res.length > 0
           this.tracks = res
           this.isLoading = false
         })
