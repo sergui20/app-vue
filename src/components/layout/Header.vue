@@ -9,7 +9,8 @@
                         </div>
                     </div>
                     <div class="nav-right nav-menu">
-
+                        <router-link class="nav-item" to="/">Buscar</router-link>
+                        <router-link class="nav-item" to="/about">Acerca de nosotros</router-link>
                     </div>
                 </div>
             </header>

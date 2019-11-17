@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div v-if="track.album" class="card">
         <div class="card-image">
             <figure class="image is-1by1">
                 <img :src="track.album.images[0].url">
@@ -20,12 +20,15 @@
                 </div>
             </div>
             <div class="content">
-                <small>{{ track.duration_ms }}</small>
+                <small>{{ track.duration_ms | ms-to-mm }}</small>
                 <nav class="level">
                     <div class="level-left">
-                        <a class="level-item">
+                        <button class="level-item button is-primary">
                             <span class="icon is-small" @click="selectTrack">▶️</span>
-                        </a>
+                        </button>
+                        <button class="level-item button is-warning">
+                            <span class="icon is-small" @click="goToTrack(track.id)">🌎</span>
+                        </button>
                     </div>
                 </nav>
             </div>
@@ -34,15 +37,19 @@
 </template>
 
 <script>
+import trackMixin from '../mixins/track';
 export default {
     props: {
         track: {type: Object, required: true}
     },
     methods: {
-        selectTrack() {
-            this.$emit('select', this.track.id)
-            this.$bus.$emit('set-track', this.track)
+        goToTrack(id) {
+            if(!this.track.preview_url) return
+            this.$router.push({name: 'track', params: {id}})
         }
-    }
+    },
+    mixins: [
+        trackMixin
+    ]
 }
 </script>
