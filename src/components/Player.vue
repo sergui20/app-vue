@@ -1,12 +1,12 @@
 <template>
-    <div class="content">
+    <div v-if="track.album" class="content">
         <p>
-            <img v-if="track.album" :src="track.album.images[0].url" />
+            <img :src="track.album.images[0].url" />
         </p>
 
         <p>
             <strong>{{ track.name }}</strong>
-            <small>{{ track.duration_ms }}</small>
+            <small>{{ track.duration_ms | ms-to-mm }}</small>
         </p>
 
         <p>
@@ -16,16 +16,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-    data() {
-        return {
-            track: {}
-        }
-    },
-    created() {
-        this.$bus.$on('set-track', (track) => {
-            this.track = track
-        })
+    computed: {
+        ...mapState(['track'])
     }
 }
 </script>
